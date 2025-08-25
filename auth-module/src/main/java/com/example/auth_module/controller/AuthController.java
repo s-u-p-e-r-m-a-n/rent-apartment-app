@@ -58,12 +58,4 @@ public class AuthController {
 
         return null;
     }
-    @GetMapping("/api/auth/")
-    public String test(){
-        return "test";
-    }
-    @PostMapping("/api/auth/")
-    public String test1(){
-        return "test1";
-            }
 }

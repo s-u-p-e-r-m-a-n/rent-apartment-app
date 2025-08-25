@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0e22cfb0-8ffa-4fc4-abc2-665f07dbcc46" name="Changes" comment="[RAA-04]test">
+    <list default="true" id="0e22cfb0-8ffa-4fc4-abc2-665f07dbcc46" name="Changes" comment="chore: initial project setup">
       <change afterPath="$PROJECT_DIR$/auth-module/src/main/java/com/example/auth_module/config/PasswordConfig.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/auth-module/src/main/java/com/example/auth_module/config/SecurityFilterChain.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/auth-module/src/main/java/com/example/auth_module/dto/LoginRequestDto.java" afterDir="false" />
@@ -263,7 +263,7 @@
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
     "run.configurations.included.in.services": "true",
-    "settings.editor.selected.configurable": "preferences.general",
+    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -747,7 +747,7 @@
       <workItem from="1756123539893" duration="3262000" />
       <workItem from="1756127648186" duration="37000" />
       <workItem from="1756127688824" duration="826000" />
-      <workItem from="1756128525593" duration="1594000" />
+      <workItem from="1756128525593" duration="3077000" />
     </task>
     <task id="LOCAL-00001" summary="git удаленный добавить источник https://github.com/superman/rent_apartment_app.git&#10; git branch -M main &#10;git push -u origin main">
       <option name="closed" value="true" />
@@ -1010,7 +1010,8 @@
     <MESSAGE value="[RAA-04]добавление коментария в контроллер" />
     <MESSAGE value="[RAA-05]test" />
     <MESSAGE value="[RAA-04]test" />
-    <option name="LAST_COMMIT_MESSAGE" value="[RAA-04]test" />
+    <MESSAGE value="chore: initial project setup" />
+    <option name="LAST_COMMIT_MESSAGE" value="chore: initial project setup" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

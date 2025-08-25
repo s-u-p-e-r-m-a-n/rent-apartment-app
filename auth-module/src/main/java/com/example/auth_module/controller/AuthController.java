@@ -1,5 +1,6 @@
 package com.example.auth_module.controller;
 
+import com.example.auth_module.dto.TokenResponseDto;
 import com.example.auth_module.dto.UserRequestDto;
 import com.example.auth_module.dto.UserResponseDto;
 import com.example.auth_module.exception.UserException;
@@ -47,9 +48,8 @@ public class AuthController {
        return authService.deleteUser(id);
     }
 
-
     @PostMapping(AUTHORIZATION_USER)
-    public String authorization(@RequestBody UserRequestDto userRequestDto) {
+    public TokenResponseDto authorization(@RequestBody UserRequestDto userRequestDto) {
         return authService.authorization(userRequestDto);
     }
 

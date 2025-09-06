@@ -1,4 +1,4 @@
 package com.example.auth_module.controller;
 
-public class AuthControllerTests {
+public class AuthControllerTest {
 }

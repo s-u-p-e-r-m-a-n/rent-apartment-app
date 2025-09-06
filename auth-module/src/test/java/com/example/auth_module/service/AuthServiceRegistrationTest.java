@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Тестируем метод регистрации пользователя")
-public class AuthServiceRegistrationMethodUnitTests {
+public class AuthServiceRegistrationTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;

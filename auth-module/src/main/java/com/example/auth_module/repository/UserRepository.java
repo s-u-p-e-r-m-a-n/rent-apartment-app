@@ -22,10 +22,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>, UserRep
     @Query(value = "select u from UserEntity u")
     public List<UserEntity> findAllUsersJpql();
 
-    public List<UserEntity> findUserEntitiesByTokenIsNotNull();
-    @Query(value = "select u from UserEntity u  where u.token IS NOT NULL")
-    public List<UserEntity> findUserEntitiesByTokenIsNullJpql();
-   //перед сохранением нового пользователя проверяем, что login ещё не занят;
+   //перед сохранением нового пользователя проверяем, что login ещё не занят
     boolean existsByLogin(String login);
     //и что username тоже уникальный.
     boolean existsByUsername(String username);

@@ -45,8 +45,8 @@ public class AuthServiceRegistrationTest {
 
     @BeforeEach
     void setUp() {
-        userRequestDto = userRequestDto = new UserRequestDto("test@mail",
-            "Serega","123456","1234");
+        userRequestDto = userRequestDto = new UserRequestDto("Serega",
+            "test@mail","123456","1234");
 
 
     }
@@ -54,19 +54,19 @@ public class AuthServiceRegistrationTest {
     @DisplayName("Тестируем успешную регистрацию пользователя")
     @Test
     void checkingTheRegistrationSuccess() {
-        when(validService.validation("test@mail")).thenReturn("test@mail");
-        when(userRepository.findByEmailJpql("test@mail")).thenReturn(Optional.empty());
+        when(validService.validation(anyString())).thenReturn(userRequestDto.loginValue());
+        when(userRepository.findByEmailJpql(anyString())).thenReturn(Optional.empty());
         when(authMapper.mappUserDtoToUserEntity(any())).thenReturn(new UserEntity());
-        when(passwordEncoder.encode("123456")).thenReturn("$hash123");
+        when(passwordEncoder.encode(userRequestDto.passwordValue())).thenReturn("$hash123");
         when(userRepository.save(any(UserEntity.class))).thenAnswer(inv -> {
             UserEntity e = inv.getArgument(0);
             e.setId(1L);
             return e;
         });
-        when(emailSenderIntegrationService.sendCodeVerification(any())).thenReturn("CODE_SENT");
+        when(emailSenderIntegrationService.sendCodeVerification(any())).thenReturn("код отправлен");
 
         String result = authService.registration(userRequestDto);
-        assertEquals("CODE_SENT", result);
+        assertEquals("код отправлен", result);
 
         var userCaptor = ArgumentCaptor.forClass(UserEntity.class);
         verify(userRepository).save(userCaptor.capture());
@@ -85,7 +85,7 @@ public class AuthServiceRegistrationTest {
     @DisplayName("Тестируем ошибку при некорректном e-mail")
     @Test
     void checkingTheRegistrationValidationError() {
-        when(validService.validation("test@mail")).thenThrow(new IllegalArgumentException("Invalid email format"));
+        when(validService.validation(anyString())).thenThrow(new IllegalArgumentException("Invalid email format"));
         assertThrows(IllegalArgumentException.class, () -> authService.registration(userRequestDto));
         verifyNoInteractions(authMapper, userRepository, emailSenderIntegrationService);
     }
@@ -93,8 +93,8 @@ public class AuthServiceRegistrationTest {
     @DisplayName("Ошибка при дублирующемся e-mail")
     @Test
     void registrationDuplicateEmail() {
-        when(validService.validation("test@mail")).thenReturn("test@mail");
-        when(userRepository.findByEmailJpql("test@mail")).thenReturn(Optional.of(new UserEntity()));
+        when(validService.validation(anyString())).thenReturn(userRequestDto.loginValue());
+        when(userRepository.findByEmailJpql(userRequestDto.loginValue())).thenReturn(Optional.of(new UserEntity()));
         assertThrows(UserException.class, () -> authService.registration(userRequestDto));
         verifyNoInteractions(authMapper, emailSenderIntegrationService, passwordEncoder);
 
@@ -103,10 +103,10 @@ public class AuthServiceRegistrationTest {
     @DisplayName("Ошибка сохранения пользователя при регистрации")
     @Test
     void registrationSaveThrowsException() {
-        when(validService.validation("test@mail")).thenReturn("test@mail");
-        when(userRepository.findByEmailJpql("test@mail")).thenReturn(Optional.empty());
+        when(validService.validation(anyString())).thenReturn(userRequestDto.loginValue());
+        when(userRepository.findByEmailJpql(userRequestDto.loginValue())).thenReturn(Optional.empty());
         when(authMapper.mappUserDtoToUserEntity(any())).thenReturn(new UserEntity());
-        when(passwordEncoder.encode("123456")).thenReturn("$hash123");
+        when(passwordEncoder.encode(userRequestDto.passwordValue())).thenReturn("$hash123");
         when(userRepository.save(any(UserEntity.class))).thenThrow(new RuntimeException("DB error"));
 
         RuntimeException ex = assertThrows(RuntimeException.class, () -> authService.registration(userRequestDto));
@@ -118,10 +118,10 @@ public class AuthServiceRegistrationTest {
     @DisplayName("Сбой отправки кода подтверждения")
     @Test
     void testAuthorizationIncorrectCodeValue() {
-        when(validService.validation("test@mail")).thenReturn("test@mail");
-        when(userRepository.findByEmailJpql("test@mail")).thenReturn(Optional.empty());
+        when(validService.validation(anyString())).thenReturn(userRequestDto.loginValue());
+        when(userRepository.findByEmailJpql(userRequestDto.loginValue())).thenReturn(Optional.empty());
         when(authMapper.mappUserDtoToUserEntity(any())).thenReturn(new UserEntity());
-        when(passwordEncoder.encode("123456")).thenReturn("$hash123");
+        when(passwordEncoder.encode(userRequestDto.passwordValue())).thenReturn("$hash123");
         when(userRepository.save(any(UserEntity.class))).thenAnswer(inv -> inv.getArgument(0));
         when(emailSenderIntegrationService.sendCodeVerification(any())).thenThrow(new UserException("ошибка код не отправлен", 666));
 

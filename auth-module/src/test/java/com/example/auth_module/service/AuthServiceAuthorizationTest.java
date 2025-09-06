@@ -28,7 +28,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthServiceAuthorizationMethodUnitTest {
+public class AuthServiceAuthorizationTest {
 
     @Mock private ValidService validService;
     @Mock private UserRepository userRepository;
@@ -62,7 +62,7 @@ public class AuthServiceAuthorizationMethodUnitTest {
     @DisplayName("Авторизация успешна для GUEST с верным кодом")
     void testAuthorizationGuestSuccess() {
         when(validService.validation(anyString())).thenReturn(userRequestDto.loginValue());
-        when(userRepository.findByLoginCriteria(userRequestDto.loginValue()))
+        when(userRepository.findByLoginCriteria(anyString()))
             .thenReturn(Optional.of(userEntity));
         when(passwordEncoder.matches("123456", "$hash123")).thenReturn(true);
         when(jwtService.generateToken(eq("test@mail"), any()))
@@ -90,12 +90,12 @@ public class AuthServiceAuthorizationMethodUnitTest {
     void testAuthorizationIncorrectLoginValue() {
         when(validService.validation(anyString())).thenReturn(userRequestDto.loginValue());
         // имитируем отсутствие пользователя
-        when(userRepository.findByLoginCriteria(userRequestDto.loginValue()))
+        when(userRepository.findByLoginCriteria(anyString()))
             .thenReturn(Optional.empty());
 
         UserException ex = assertThrows(UserException.class,
             () -> authService.authorization(userRequestDto));
-        assertEquals("Пользователь не существует", ex.getMessage()); // USER_DOES_NOT_EXIST
+        assertEquals("Пользователь не существует", ex.getMessage()); // USER_DOёES_NOT_EXIST
         verify(userRepository, times(1)).findByLoginCriteria(anyString());
         verifyNoMoreInteractions(userRepository);
     }
@@ -115,14 +115,11 @@ public class AuthServiceAuthorizationMethodUnitTest {
     @DisplayName("Не подтвержденный email (неверный код)")
     @Test
     void testAuthorizationIncorrectCodeValue() {
-        UserRequestDto bad = new UserRequestDto("test@mail","Serega","123456","1234");
-//        bad.loginValue("test@mail");
-//        bad.usernameValue("Serega");
-//        bad.passwordValue("123456");
-//        bad.code("123"); // неверный код
+        UserRequestDto bad = new UserRequestDto("test@mail","Serega","123456","123");
+
 
         when(validService.validation(anyString())).thenReturn(bad.loginValue());
-        when(userRepository.findByLoginCriteria(bad.loginValue()))
+        when(userRepository.findByLoginCriteria(anyString()))
             .thenReturn(Optional.of(userEntity));
         when(passwordEncoder.matches("123456", "$hash123")).thenReturn(true);
 

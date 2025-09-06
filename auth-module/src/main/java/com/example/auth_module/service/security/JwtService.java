@@ -61,7 +61,7 @@ public class JwtService {
                 .parseSignedClaims(token);   // парсим и валидируем exp/подпись/формат
 //        Если подпись неверна, формат битый или токен просрочен, будет JwtException
 //                (в т.ч. ExpiredJwtException).
-//                Мы возвращаем Jws<Claims> — это «подписанные клеймы» (payload + заголовок).
+//                Возвращаем Jws<Claims> — это «подписанные клеймы» (payload + заголовок).
     }
 
     public String getLogin(String token) {
@@ -72,4 +72,6 @@ public class JwtService {
     public List<String> getRoles(String token) {
         return (List<String>) parse(token).getPayload().get("roles");
     }
+
+
 }

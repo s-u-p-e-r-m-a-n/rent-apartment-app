@@ -27,6 +27,7 @@ import static com.example.auth_module.controller.AuthControllerPath.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final JwtService jwtService;
 
     @PostMapping(REGISTRATION_NEW_USER)
     public String registration(@Valid @RequestBody UserRequestDto userRequestDto) {
@@ -48,7 +49,7 @@ public class AuthController {
      */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(GET_ME)
-    public MeResponseDto me(Authentication auth, HttpServletRequest request, JwtService jwtService) {
+    public MeResponseDto me(Authentication auth, HttpServletRequest request) {
         // 1) login из Authentication (мы клали его как principal в JwtAuthFilter)
         String login = auth.getName();
 

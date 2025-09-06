@@ -79,7 +79,7 @@ public class AuthServiceImpl implements AuthService {
 
         validService.validation(userRequestDto.loginValue());
 
-        String loginValidate = userRequestDto.loginValue();
+        String loginValidate = userRequestDto.loginValue().toLowerCase(Locale.ROOT);
         UserEntity userEntityByLogin = userRepository.findByLoginCriteria(loginValidate)
             .orElseThrow(() -> new UserException(USER_DOES_NOT_EXIST, USER_DOES_NOT_EXIST_CODE));
         if (!passwordEncoder.matches(userRequestDto.passwordValue(), userEntityByLogin.getPasswordHash())) {
@@ -101,15 +101,16 @@ public class AuthServiceImpl implements AuthService {
         // подтверждаем e-mail
         Set<UserEntity.Role> roles = new HashSet<>(Optional.ofNullable(userEntityByLogin.getRoles())
             .orElseGet(HashSet::new));
-        if (userEntityByLogin.getRoles().contains(UserEntity.Role.GUEST)) {
-            userEntityByLogin.getRoles().remove(UserEntity.Role.GUEST);
-            userEntityByLogin.getRoles().add(UserEntity.Role.USER);
+        if (roles.contains(UserEntity.Role.GUEST)) {
+            roles.remove(UserEntity.Role.GUEST);
+            roles.add(UserEntity.Role.USER);
         }
+        userEntityByLogin.setRoles(roles);
         userEntityByLogin.setVerification(VERIFICATION_EQUALS);
         userRepository.save(userEntityByLogin);
 
         // 5) выдаём токен (не сохраняем его в БД)
-        String accessToken = jwtService.generateToken(userEntityByLogin.getLogin(), userEntityByLogin.getRoles());
+        String accessToken = jwtService.generateToken(userEntityByLogin.getLogin(), roles);
         long accessExp = jwtService.getExpiryEpochMillis(accessToken);
         return new TokenResponseDto(accessToken, Instant.ofEpochMilli(accessExp));
     }

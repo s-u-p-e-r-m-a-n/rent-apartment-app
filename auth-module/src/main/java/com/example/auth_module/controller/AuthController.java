@@ -33,7 +33,7 @@ public class AuthController {
     public String registration(@Valid @RequestBody UserRequestDto userRequestDto) {
         return authService.registration(userRequestDto);
     }
-    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @DeleteMapping(DELETE_USER)
     public List<UserResponseDto> delete(@PathVariable Long id) {
         return authService.deleteUser(id);

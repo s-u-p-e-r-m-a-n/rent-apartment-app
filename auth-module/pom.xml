@@ -62,11 +62,7 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <!-- Flyway -->
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-        </dependency>
+
 
         <!-- JWT (версии указываем ЯВНО здесь, без dependencyManagement) -->
         <dependency>
@@ -88,17 +84,12 @@
         </dependency>
 
         <!-- Eureka -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>-->
+<!--        </dependency>-->
 
-        <!-- Архитектурный модуль с миграциями -->
-        <dependency>
-            <groupId>com.example</groupId>
-            <artifactId>architect-module</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
+
 
         <!-- PostgreSQL -->
         <dependency>
@@ -128,9 +119,13 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
     </dependencies>
 
-    <!-- ЯВНО добавим Central, чтобы IDEA точно тянула JJWT -->
+    <!-- добавим Central, чтобы IDEA точно тянула JJWT -->
     <repositories>
         <repository>
             <id>central</id>

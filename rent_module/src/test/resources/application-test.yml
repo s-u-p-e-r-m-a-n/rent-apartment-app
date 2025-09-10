@@ -11,6 +11,4 @@ spring:
             hibernate.show_sql: false
             hibernate.format_sql: true
     flyway:
-        enabled: true
-        locations: classpath:db/migration/h2
-        clean-disabled: false
+        enabled: false   # отключаем, если нет миграций

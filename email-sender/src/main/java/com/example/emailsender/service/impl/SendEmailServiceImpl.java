@@ -1,10 +1,11 @@
 package com.example.emailsender.service.impl;
 
 import com.example.emailsender.service.SendEmailService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-
+@RequiredArgsConstructor
 @Service
 public class SendEmailServiceImpl implements SendEmailService {
 
@@ -12,9 +13,8 @@ public class SendEmailServiceImpl implements SendEmailService {
     private final static String TEXT_MAIL = "Пройдите авторизацию на RENT_APARTMENT и введите код: ";
     private final JavaMailSender mailSender;
 
-    public SendEmailServiceImpl(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
+
+
 
     /**
      * метод отправки email уведомлений

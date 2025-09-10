@@ -28,9 +28,6 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_infoSequence")
     @Column(name = "id")
     private Long id;
-    @Deprecated
-    @Column(name = "password")
-    private String password;
     @Column(name = "username",length = 255, unique = true)
     private String username;
     @Column(name = "password_hash", length = 255)
@@ -43,9 +40,6 @@ public class UserEntity {
     private String login;
     @Column(name = "date_registration")
     private LocalDateTime dateRegistration;
-    @Deprecated
-    @Column(name = "token")
-    private String token;
     @Column(name = "verification")
     private String verification;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -58,8 +52,7 @@ public class UserEntity {
         }
     }
 
-    public UserEntity(String password, String username, String login) {
-        this.password = password;
+    public UserEntity(String username, String login) {
         this.username = username;
         this.login = login;
         this.dateRegistration = LocalDateTime.now();

@@ -21,7 +21,6 @@ import java.util.Set;
  *   • SUPER_ADMIN никто не трогает.
  *   • ADMIN может ТОЛЬКО повышать USER->ADMIN.
  *   • Понижать ADMIN->USER может только SUPER_ADMIN.
- * - Никаких самодельных токенов и подсчётов в БД.
  */
 @Service
 public class UserAdminServiceImpl implements UserAdminService {

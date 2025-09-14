@@ -33,23 +33,9 @@ import static org.mockito.BDDMockito.given;
  * - миграции Flyway берутся по относительному пути из architect-module (настроено в application-test.properties)
  * - реальный репозиторий/шифрование пароля; почтовый сервис замокан
  */
-@SpringBootTest                      // поднимаем весь контекст приложения модуля
-@ActiveProfiles("test")              // используем src/test/resources/application-test.properties
-@Testcontainers                      // включаем поддержку Testcontainers в JUnit
-    class AuthServiceRegistrationIt {
-    //  БД для тестов — реальный Postgres в контейнере (один на весь класс)
-    @Container
-    static PostgreSQLContainer<?> pg = new PostgreSQLContainer<>("postgres:16-alpine")
-        .withDatabaseName("rent_apartment_db")
-        .withUsername("postgres")
-        .withPassword("postgres");
-    // Прокидываем параметры подключения контейнера в Spring (без хардкода URL/кредов)
-    @DynamicPropertySource
-    static void dbProps(DynamicPropertyRegistry r) {
-        r.add("spring.datasource.url", pg::getJdbcUrl);
-        r.add("spring.datasource.username", pg::getUsername);
-        r.add("spring.datasource.password", pg::getPassword);
-    }
+
+    class AuthServiceRegistrationIt extends BaseIT {
+
     // Получаем реальные бины сервиса и репозитория
     @Autowired AuthService authService;
     @Autowired UserRepository userRepository;
@@ -59,27 +45,14 @@ import static org.mockito.BDDMockito.given;
     void setUp() {
         userRequestDto = new UserRequestDto("Serega",
             "it_user@example.com","123456",null);
-
+            userRepository.deleteAll(); //чистим базу
 
     }
-    @Test
-    void registration_duplicateEmail_returnsConflict() {
-        given(emailSender.sendCodeVerification(any())).willReturn("OK");
-
-        authService.registration(userRequestDto);
-
-        // второй вызов
-        var ex = assertThrows(UserException.class, () -> authService.registration(userRequestDto));
-        assertThat(ex.getErrorCode()).isEqualTo(409);
-    }
-    // Режем реальную отправку писем — подменяем бин на мок
-    @MockBean EmailSenderIntegrationService emailSender;
     @Transactional
     @Test
     @DisplayName("registration создает пользователя (GUEST) и пишет код верификации")
     void registration_creates_guest_with_code() {
         // Почта не уезжает наружу — возвращаем фиктивный ответ
-        given(emailSender.sendCodeVerification(any())).willReturn("OK");
 
         var msg = authService.registration(userRequestDto);
         assertThat(msg).containsIgnoringCase("код отправлен");
@@ -90,6 +63,14 @@ import static org.mockito.BDDMockito.given;
         assertThat(saved.getPasswordHash()).isNotBlank();
     }
 
+    @Test
+    void registration_duplicateEmail_returnsConflict() {
+        authService.registration(userRequestDto);
+
+        // второй вызов
+        var ex = assertThrows(UserException.class, () -> authService.registration(userRequestDto));
+        assertThat(ex.getErrorCode()).isEqualTo(409);
+    }
 
 }
 

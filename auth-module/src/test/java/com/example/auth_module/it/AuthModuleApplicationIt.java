@@ -1,10 +1,12 @@
 package com.example.auth_module.it;
 
 import com.example.auth_module.dto.UserRequestDto;
+import com.example.auth_module.exception.UserException;
 import com.example.auth_module.model.UserEntity;
 import com.example.auth_module.repository.UserRepository;
 import com.example.auth_module.service.AuthService;
 import com.example.auth_module.service.EmailSenderIntegrationService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -14,11 +16,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 /**
  * Интеграционный тест регистрации:
@@ -30,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest                      // поднимаем весь контекст приложения модуля
 @ActiveProfiles("test")              // используем src/test/resources/application-test.properties
 @Testcontainers                      // включаем поддержку Testcontainers в JUnit
-class AuthServiceRegistrationIt {
+    class AuthServiceRegistrationIt {
     //  БД для тестов — реальный Postgres в контейнере (один на весь класс)
     @Container
     static PostgreSQLContainer<?> pg = new PostgreSQLContainer<>("postgres:16-alpine")
@@ -47,30 +53,43 @@ class AuthServiceRegistrationIt {
     // Получаем реальные бины сервиса и репозитория
     @Autowired AuthService authService;
     @Autowired UserRepository userRepository;
+    private UserRequestDto userRequestDto;
 
+    @BeforeEach
+    void setUp() {
+        userRequestDto = new UserRequestDto("Serega",
+            "it_user@example.com","123456",null);
+
+
+    }
+    @Test
+    void registration_duplicateEmail_returnsConflict() {
+        given(emailSender.sendCodeVerification(any())).willReturn("OK");
+
+        authService.registration(userRequestDto);
+
+        // второй вызов
+        var ex = assertThrows(UserException.class, () -> authService.registration(userRequestDto));
+        assertThat(ex.getErrorCode()).isEqualTo(409);
+    }
     // Режем реальную отправку писем — подменяем бин на мок
     @MockBean EmailSenderIntegrationService emailSender;
-
+    @Transactional
     @Test
     @DisplayName("registration создает пользователя (GUEST) и пишет код верификации")
     void registration_creates_guest_with_code() {
         // Почта не уезжает наружу — возвращаем фиктивный ответ
-        BDDMockito.given(emailSender.sendCodeVerification(BDDMockito.any())).willReturn("OK");
+        given(emailSender.sendCodeVerification(any())).willReturn("OK");
 
-        var req = new UserRequestDto(
-            "test@mail",   // loginValue (email)
-            "Serega",      // usernameValue
-            "123456",      // passwordValue
-            null           // code не нужен при регистрации
-        );
-
-        var msg = authService.registration(req);
+        var msg = authService.registration(userRequestDto);
         assertThat(msg).containsIgnoringCase("код отправлен");
 
-        var saved = userRepository.findByLoginCriteria("serega").orElseThrow();
+        var saved = userRepository.findByLoginCriteria("it_user@example.com").orElseThrow();
         assertThat(saved.getRoles()).contains(UserEntity.Role.GUEST);
         assertThat(saved.getVerification()).isNotBlank(); // 4-значный код
         assertThat(saved.getPasswordHash()).isNotBlank();
     }
+
+
 }
 

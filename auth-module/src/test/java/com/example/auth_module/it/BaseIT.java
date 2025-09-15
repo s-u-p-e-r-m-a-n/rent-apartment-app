@@ -4,8 +4,10 @@ import com.example.auth_module.dto.UserRequestDto;
 import com.example.auth_module.service.EmailSenderIntegrationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.BDDMockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -23,12 +25,20 @@ import static org.mockito.BDDMockito.given;
 @Testcontainers                      // включаем поддержку Testcontainers в JUnit
 public abstract class BaseIT {
 
+
+    @Autowired
+    protected JdbcTemplate jdbcTemplate;
+
+    private static final String[] TABLES_TO_TRUNCATE = {
+        "user_info"
+    };
     //  БД для тестов — реальный Postgres в контейнере (один на весь класс)
     @Container
     static PostgreSQLContainer<?> pg = new PostgreSQLContainer<>("postgres:16-alpine")
         .withDatabaseName("rent_apartment_db")
         .withUsername("postgres")
         .withPassword("postgres");
+
     // Прокидываем параметры подключения контейнера в Spring (без хардкода URL/кредов)
     @DynamicPropertySource
     static void dbProps(DynamicPropertyRegistry r) {
@@ -40,9 +50,16 @@ public abstract class BaseIT {
     @MockBean
     protected EmailSenderIntegrationService emailSender;
     private UserRequestDto userRequestDto;
+
     @BeforeEach
     void setUp() {
         given(emailSender.sendCodeVerification(any())).willReturn("OK");
+    }
+    @BeforeEach
+    void cleanupDb() {
+        for (String table : TABLES_TO_TRUNCATE) {
+            jdbcTemplate.execute("TRUNCATE TABLE " + table + " RESTART IDENTITY CASCADE");
+        }
     }
 
 }

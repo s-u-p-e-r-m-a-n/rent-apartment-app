@@ -33,8 +33,6 @@ import static org.junit.Assert.assertThrows;
     void setUp() {
         userRequestDto = new UserRequestDto("Serega",
             "it_user@example.com","123456",null);
-            userRepository.deleteAll(); //чистим базу
-
     }
     @Transactional
     @Test

@@ -31,11 +31,7 @@ public class AuthAuthorizationIt extends BaseIT {
     private String email = "it_authz@example.com";
     private String pwd = "Password123!";
 
-    @BeforeEach
-    void clean() {
-        userRepository.deleteAll();
 
-    }
 
     @Test
     @DisplayName("POST /api/auth/authorization: выдаёт JWT (первый вход с кодом)")

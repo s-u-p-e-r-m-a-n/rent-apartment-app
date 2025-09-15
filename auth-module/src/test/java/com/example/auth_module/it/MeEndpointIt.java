@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 
+import static java.util.Objects.isNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MeEndpointIt extends BaseIT {
@@ -23,13 +24,10 @@ class MeEndpointIt extends BaseIT {
     private final String email    = "it_me@example.com";
     private final String pwd      = "Password123!";
 
-    @BeforeEach
-    void clean() {
-        userRepository.deleteAll();
-    }
+
 
     @Test
-    @DisplayName("GET /api/auth/me: 401 без токена и 200 с Bearer JWT")
+    @DisplayName("GET /api/auth/me: 403 без токена и 200 с Bearer JWT")
     void me_requires_bearer_token() {
         // 1) Без токена → 401 (из-за @PreAuthorize(\"isAuthenticated()\"))
         var noAuth = rest.getForEntity("/api/auth/me", String.class);
@@ -42,7 +40,11 @@ class MeEndpointIt extends BaseIT {
         var req = new UserRequestDto(username, email, pwd, code);
         var tokenResp = rest.postForEntity("/api/auth/authorization", req, TokenResponseDto.class);
         assertThat(tokenResp.getStatusCode()).isEqualTo(HttpStatus.OK);
-        String jwt = tokenResp.getBody().accessToken();
+        String jwt=null;
+
+        if(!isNull(tokenResp.getBody())){
+            jwt=tokenResp.getBody().accessToken();
+        }
 
         // 3) С токеном → 200
         HttpHeaders h = new HttpHeaders();

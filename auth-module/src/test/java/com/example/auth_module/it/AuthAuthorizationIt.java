@@ -30,8 +30,7 @@ public class AuthAuthorizationIt extends BaseIT {
     private String username = "Serega";
     private String email = "it_authz@example.com";
     private String pwd = "Password123!";
-
-
+    private static final String AUTHZ_URL = "/api/auth/authorization";
 
     @Test
     @DisplayName("POST /api/auth/authorization: выдаёт JWT (первый вход с кодом)")
@@ -79,5 +78,28 @@ public class AuthAuthorizationIt extends BaseIT {
         assertThat(second.getBody()).isNotNull();
         assertThat(second.getBody().accessToken()).isNotBlank();
     }
+
+    @Test
+    @DisplayName("authorization: пустой verification-код → 400 BAD_REQUEST (валидация @Valid)")
+    void authorization_empty_code_returns_400() {
+        authService.registration(new UserRequestDto(username, email, pwd, null));
+
+        // Пустой код — нарушает @NotBlank (если стоит на поле code)
+        var req = new UserRequestDto(username, email, pwd, "");
+        ResponseEntity<String> resp = rest.postForEntity(AUTHZ_URL, req, String.class);
+
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+    @Test
+    @DisplayName("authorization: неверный пароль ловим ошибку 401")
+    void authorization_returns_401() {
+        authService.registration(new UserRequestDto(username, email, pwd, null));
+        UserEntity userEntity = userRepository.findByEmailJpql(email).orElseThrow();
+        String code = userEntity.getVerification();
+        var badReq = new UserRequestDto(username, email, "WrongPass123!", code);
+        ResponseEntity<String> resp = rest.postForEntity(AUTHZ_URL, badReq, String.class);
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
 
 }

@@ -4,8 +4,6 @@ import com.example.auth_module.dto.MeResponseDto;
 import com.example.auth_module.dto.TokenResponseDto;
 import com.example.auth_module.dto.UserRequestDto;
 import com.example.auth_module.dto.UserResponseDto;
-import com.example.auth_module.mapper.AuthMapper;
-import com.example.auth_module.repository.UserRepository;
 import com.example.auth_module.service.AuthService;
 import com.example.auth_module.service.security.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,6 +31,7 @@ public class AuthController {
     public String registration(@Valid @RequestBody UserRequestDto userRequestDto) {
         return authService.registration(userRequestDto);
     }
+
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     @DeleteMapping(DELETE_USER)
     public List<UserResponseDto> delete(@PathVariable Long id) {
@@ -42,10 +41,10 @@ public class AuthController {
     /**
      * Текущий пользователь по JWT.
      * Security:
-     *  - Должен быть залогинен (любой ролью).
-     *  - login берём из Authentication (заполнил JwtAuthFilter).
-     *  - roles берём из Authentication#getAuthorities (ROLE_* -> без префикса).
-     *  - (опц.) expiresAt берём из самого токена (из заголовка Authorization).
+     * - Должен быть залогинен (любой ролью).
+     * - login берём из Authentication (заполнил JwtAuthFilter).
+     * - roles берём из Authentication#getAuthorities (ROLE_* -> без префикса).
+     * - (опц.) expiresAt берём из самого токена (из заголовка Authorization).
      */
     @PreAuthorize("isAuthenticated()")
     @GetMapping(GET_ME)
@@ -68,6 +67,7 @@ public class AuthController {
 
         return new MeResponseDto(login, roles, expiresAt);
     }
+
     @PostMapping(AUTHORIZATION_USER)
     public TokenResponseDto authorization(@Valid @RequestBody UserRequestDto userRequestDto) {
         return authService.authorization(userRequestDto);

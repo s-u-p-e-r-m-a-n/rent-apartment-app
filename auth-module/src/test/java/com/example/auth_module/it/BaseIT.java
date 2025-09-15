@@ -3,7 +3,6 @@ package com.example.auth_module.it;
 import com.example.auth_module.dto.UserRequestDto;
 import com.example.auth_module.service.EmailSenderIntegrationService;
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -55,6 +54,7 @@ public abstract class BaseIT {
     void setUp() {
         given(emailSender.sendCodeVerification(any())).willReturn("OK");
     }
+
     @BeforeEach
     void cleanupDb() {
         for (String table : TABLES_TO_TRUNCATE) {

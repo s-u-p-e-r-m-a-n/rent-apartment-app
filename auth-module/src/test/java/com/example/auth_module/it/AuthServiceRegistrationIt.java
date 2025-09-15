@@ -22,18 +22,21 @@ import static org.junit.Assert.assertThrows;
  * - реальный репозиторий/шифрование пароля; почтовый сервис замокан
  */
 
-    class AuthServiceRegistrationIt extends BaseIT {
+class AuthServiceRegistrationIt extends BaseIT {
 
     // Получаем реальные бины сервиса и репозитория
-    @Autowired AuthService authService;
-    @Autowired UserRepository userRepository;
+    @Autowired
+    AuthService authService;
+    @Autowired
+    UserRepository userRepository;
     private UserRequestDto userRequestDto;
 
     @BeforeEach
     void setUp() {
         userRequestDto = new UserRequestDto("Serega",
-            "it_user@example.com","123456",null);
+            "it_user@example.com", "Password123!", null);
     }
+
     @Transactional
     @Test
     @DisplayName("registration создает пользователя (GUEST) и пишет код верификации")
@@ -43,7 +46,7 @@ import static org.junit.Assert.assertThrows;
         var msg = authService.registration(userRequestDto);
         assertThat(msg).containsIgnoringCase("код отправлен");
 
-        var saved = userRepository.findByLoginCriteria("it_user@example.com").orElseThrow();
+        var saved = userRepository.findByEmailJpql("it_user@example.com").orElseThrow();
         assertThat(saved.getRoles()).contains(UserEntity.Role.GUEST);
         assertThat(saved.getVerification()).isNotBlank(); // 4-значный код
         assertThat(saved.getPasswordHash()).isNotBlank();

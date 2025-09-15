@@ -4,26 +4,30 @@ import com.example.auth_module.dto.TokenResponseDto;
 import com.example.auth_module.dto.UserRequestDto;
 import com.example.auth_module.repository.UserRepository;
 import com.example.auth_module.service.AuthService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 
 import static java.util.Objects.isNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MeEndpointIt extends BaseIT {
 
-    @Autowired AuthService authService;
-    @Autowired UserRepository userRepository;
-    @Autowired TestRestTemplate rest;
+    @Autowired
+    AuthService authService;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    TestRestTemplate rest;
 
     private final String username = "Serega";
-    private final String email    = "it_me@example.com";
-    private final String pwd      = "Password123!";
-
+    private final String email = "it_me@example.com";
+    private final String pwd = "Password123!";
 
 
     @Test
@@ -40,10 +44,10 @@ class MeEndpointIt extends BaseIT {
         var req = new UserRequestDto(username, email, pwd, code);
         var tokenResp = rest.postForEntity("/api/auth/authorization", req, TokenResponseDto.class);
         assertThat(tokenResp.getStatusCode()).isEqualTo(HttpStatus.OK);
-        String jwt=null;
+        String jwt = null;
 
-        if(!isNull(tokenResp.getBody())){
-            jwt=tokenResp.getBody().accessToken();
+        if (!isNull(tokenResp.getBody())) {
+            jwt = tokenResp.getBody().accessToken();
         }
 
         // 3) С токеном → 200

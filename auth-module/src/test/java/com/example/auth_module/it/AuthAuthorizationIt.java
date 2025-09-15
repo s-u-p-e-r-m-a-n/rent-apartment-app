@@ -90,6 +90,7 @@ public class AuthAuthorizationIt extends BaseIT {
 
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
+
     @Test
     @DisplayName("authorization: неверный пароль ловим ошибку 401")
     void authorization_returns_401() {
@@ -99,6 +100,19 @@ public class AuthAuthorizationIt extends BaseIT {
         var badReq = new UserRequestDto(username, email, "WrongPass123!", code);
         ResponseEntity<String> resp = rest.postForEntity(AUTHZ_URL, badReq, String.class);
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+
+    @Test
+    @DisplayName("authorization: неверный verification-код → CONFLICT (UserException)")
+    void authorization_wrong_code_returns_user_exception() {
+
+        authService.registration(new UserRequestDto(username, email, pwd, null));
+        var wrongCode = "0000";
+        var req = new UserRequestDto(username, email, pwd, wrongCode);
+        ResponseEntity<String> resp = rest.postForEntity(AUTHZ_URL, req, String.class);
+
+        assertThat(resp.getBody()).contains("Не подтвержденный email или неправильный код");
     }
 
 

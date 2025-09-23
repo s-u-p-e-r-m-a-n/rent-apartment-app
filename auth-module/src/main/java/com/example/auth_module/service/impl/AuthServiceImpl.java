@@ -94,6 +94,10 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // ещё не верифицирован
+        if (userRequestDto.code() == null) {
+            throw new UserException("Verification code is required", 422);
+        }
+
         if (!Objects.equals(userRequestDto.code(), userEntityByLogin.getVerification())) {
             throw new UserException(UNCONFIRMED_EMAIL, UNCONFIRMED_EMAIL_CODE);
         }

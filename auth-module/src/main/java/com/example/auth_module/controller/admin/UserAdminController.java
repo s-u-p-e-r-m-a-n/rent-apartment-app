@@ -4,13 +4,20 @@ import com.example.auth_module.dto.ChangeRoleRequest;
 import com.example.auth_module.dto.UserShortDto;
 import com.example.auth_module.model.UserEntity;
 import com.example.auth_module.service.admin.UserAdminService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Locale;
 import java.util.Set;
@@ -32,6 +39,59 @@ public class UserAdminController {
      * @param body содержит желаемую роль (USER или ADMIN)
      * @param auth Authentication с актором (кто вызвал) — приходит из JWT
      */
+    @Operation(summary = "Изменить роль пользователя по идентификатору")
+    @SecurityRequirement(name = "bearerAuth")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+
+        @ApiResponse(responseCode = "400",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(ref = "#/components/schemas/ApiError"),
+                examples = @ExampleObject(
+                    name = "bad-request",
+                    value = """
+                        { "error": "Bad request parameters", "status": 400,
+                          "path": "/api/auth/admin/{id}/role", "timestamp": "2025-09-21T20:15:45Z" }
+                        """
+                ))),
+
+        @ApiResponse(responseCode = "403",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(ref = "#/components/schemas/ApiError"),
+                examples = @ExampleObject(
+                    name = "forbidden",
+                    value = """
+                        { "error": "Access denied", "status": 403,
+                          "path": "/api/auth/admin/{id}/role", "timestamp": "2025-09-21T20:15:45Z" }
+                        """
+                ))),
+
+        @ApiResponse(responseCode = "404",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(ref = "#/components/schemas/ApiError"),
+                examples = @ExampleObject(
+                    name = "not-found",
+                    value = """
+                        { "error": "Resource not found", "status": 404,
+                          "path": "/api/auth/admin/{id}/role", "timestamp": "2025-09-21T20:15:45Z" }
+                        """
+                ))),
+
+        @ApiResponse(responseCode = "409",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(ref = "#/components/schemas/ApiError"),
+                examples = @ExampleObject(
+                    name = "conflict",
+                    value = """
+                        { "error": "Conflict: integrity constraint", "status": 409,
+                          "path": "/api/auth/admin/{id}/role", "timestamp": "2025-09-21T20:15:45Z" }
+                        """
+                ))),
+
+        @ApiResponse(responseCode = "500", ref = "#/components/responses/ServerError")
+    })
+
+// @PatchMapping("/{id}/role") — маппинг оставляем как у тебя
 
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @PatchMapping("/{id}/role")
@@ -46,8 +106,7 @@ public class UserAdminController {
             .stream()
             .map(GrantedAuthority::getAuthority)
             .collect(Collectors.toSet());
-        // --- 2) Валидируем запрошенную роль ---
-        // В проекте роль — это вложенный enum: UserEntity.Role (GUEST, USER, ADMIN, SUPER_ADMIN).
+        // --- 2) Валидируем запрошенную роль ---x`
         UserEntity.Role targetRole;
         try {
             targetRole = UserEntity.Role.valueOf(body.role().toUpperCase(Locale.ROOT));

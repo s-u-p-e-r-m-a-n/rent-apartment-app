@@ -1,4 +1,4 @@
-package com.example.auth_module.repository;
+package com.example.auth_module.unit.repository;
 
 import com.example.auth_module.model.UserEntity;
 import com.example.auth_module.repository.Impl.UserRepositoryCriteriaImpl;

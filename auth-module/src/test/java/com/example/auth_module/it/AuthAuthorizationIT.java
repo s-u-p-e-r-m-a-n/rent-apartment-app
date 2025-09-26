@@ -7,7 +7,6 @@ import com.example.auth_module.model.UserEntity;
 import com.example.auth_module.repository.UserRepository;
 import com.example.auth_module.service.AuthService;
 import com.example.auth_module.service.security.JwtService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,7 @@ import org.springframework.http.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AuthAuthorizationIt extends BaseIT {
+public class AuthAuthorizationIT extends BaseIT {
 
     @Autowired
     AuthService authService;

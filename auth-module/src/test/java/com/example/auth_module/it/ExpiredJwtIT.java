@@ -16,7 +16,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ExpiredJwtIt extends BaseIT {
+class ExpiredJwtIT extends BaseIT {
 
     private static final String ME = "/api/auth/me";
 

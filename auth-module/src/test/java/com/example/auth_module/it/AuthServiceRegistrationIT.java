@@ -22,7 +22,7 @@ import static org.junit.Assert.assertThrows;
  * - реальный репозиторий/шифрование пароля; почтовый сервис замокан
  */
 
-class AuthServiceRegistrationIt extends BaseIT {
+class AuthServiceRegistrationIT extends BaseIT {
 
     // Получаем реальные бины сервиса и репозитория
     @Autowired

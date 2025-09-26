@@ -16,7 +16,7 @@ import org.springframework.http.HttpStatus;
 import static java.util.Objects.isNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class MeEndpointIt extends BaseIT {
+class MeEndpointIT extends BaseIT {
 
     @Autowired
     AuthService authService;

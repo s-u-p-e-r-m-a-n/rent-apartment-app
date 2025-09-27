@@ -5,6 +5,8 @@ import com.example.auth_module.dto.UserRequestDto;
 import com.example.auth_module.exception.UserException;
 import com.example.auth_module.model.UserEntity;
 import com.example.auth_module.repository.UserRepository;
+import com.example.auth_module.service.EmailSenderIntegrationService;
+import com.example.auth_module.service.ValidService;
 import com.example.auth_module.service.impl.AuthServiceImpl;
 import com.example.auth_module.service.security.JwtService;
 import jakarta.persistence.EntityManager;

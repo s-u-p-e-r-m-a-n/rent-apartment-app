@@ -6,6 +6,8 @@ import com.example.auth_module.exception.UserException;
 import com.example.auth_module.mapper.AuthMapper;
 import com.example.auth_module.model.UserEntity;
 import com.example.auth_module.repository.UserRepository;
+import com.example.auth_module.service.EmailSenderIntegrationService;
+import com.example.auth_module.service.ValidService;
 import com.example.auth_module.service.impl.AuthServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

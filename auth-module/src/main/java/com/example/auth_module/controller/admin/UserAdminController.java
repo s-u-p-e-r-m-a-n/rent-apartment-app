@@ -5,6 +5,7 @@ import com.example.auth_module.dto.UserShortDto;
 import com.example.auth_module.model.UserEntity;
 import com.example.auth_module.service.admin.UserAdminService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -41,8 +42,17 @@ public class UserAdminController {
      */
     @Operation(summary = "Изменить роль пользователя по идентификатору")
     @SecurityRequirement(name = "bearerAuth")
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "OK"),
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "OK",
+
+            content = @Content(schema = @Schema(type = "string"), examples = @ExampleObject(
+                name = "ok",
+                value = """ 
+                    {"id": "1", "login": "test@mail.ru","username": "vasya",
+                    "role": "USER" } 
+                    """
+
+            ))),
 
         @ApiResponse(responseCode = "400",
             content = @Content(mediaType = "application/json",
@@ -95,7 +105,9 @@ public class UserAdminController {
 
     @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @PatchMapping("/{id}/role")
-    public UserShortDto changeRole(@PathVariable("id") Long id,
+    public UserShortDto changeRole(@Parameter(name = "id", description = "ID пользователя для изменения роли",
+        required = true, example = "4")
+                                   @PathVariable("id") Long id,
                                    @RequestBody ChangeRoleRequest body,
                                    Authentication auth) {
         // --- 1) Достаём данные актёра (кто делает запрос) из SecurityContext ---

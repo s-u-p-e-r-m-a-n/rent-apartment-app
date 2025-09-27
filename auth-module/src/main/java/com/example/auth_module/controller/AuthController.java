@@ -40,7 +40,19 @@ public class AuthController {
         description = "Создаёт пользователя (роль GUEST), отправляет 4-значный код верификации на e-mail"
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "код отправлен"),
+        @ApiResponse(
+            responseCode = "200",
+            description = "код отправлен",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(type = "string"),
+                examples = @ExampleObject(
+                    name = "ok",
+                    value = "\"код отправлен\""
+                )
+            )
+        ),
+
 
         // 400: неверные данные запроса (валидация)
         @ApiResponse(responseCode = "400",
@@ -109,7 +121,23 @@ public class AuthController {
         security = {@SecurityRequirement(name = "bearerAuth")}
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(
+            responseCode = "200",
+            description = "ok",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(type = "string"),
+                examples = @ExampleObject(
+                    name = "ok",
+                    value =  """
+                       [ { "id": "1", "username": "vasya",
+                          "login": "test@mail.ru","role": "USER" },
+                          { "id": "23", "username": "petr",
+                          "login": "test@mail.ru","role": "ADMIN" }]
+                        """
+                )
+            )
+        ),
 
         @ApiResponse(responseCode = "400",
             content = @Content(mediaType = "application/json",
@@ -167,10 +195,23 @@ public class AuthController {
         summary = "Профиль (me)",
         description = "Возвращает сведения о текущем пользователе"
     )
-    @SecurityRequirement(name = "bearerAuth") // <-- ОДИН раз
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(
+            responseCode = "200",
+            description = "ok",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(type = "string"),
+                examples = @ExampleObject(
+                    name = "ok",
+                    value =  """
+                       {"login": "test@mail.ru","role": "USER",
+                        "timestamp": "2025-09-21T20:15:45Z"}
+                       """
+                )
+            )
+        ),
 
         @ApiResponse(responseCode = "401",
             content = @Content(mediaType = "application/json",

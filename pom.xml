@@ -14,7 +14,7 @@
         <java.version>17</java.version>
     </properties>
 
-    <!-- НИКАКИХ dependencies и spring-boot-parent в корне! -->
+
     <modules>
         <module>architect-module</module>
         <module>auth-module</module>

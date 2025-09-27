@@ -7,7 +7,8 @@ public class AuthControllerPath {
     public static final String AUTHORIZATION_USER = BASE_URL + "/authorization";
     public static final String ADD_COMMENT = BASE_URL + "/comment";
     public static final String ADMIN_USER = BASE_URL + "/admin";
-    public static final String CHANGE_ROLE_USERS = BASE_URL + "/changeusers/{id}";
     public static final String DELETE_USER = ADMIN_USER + "/{id}";
+    public static final String GET_ME = BASE_URL + "/me";
+
 
 }

@@ -12,7 +12,5 @@ public interface AuthService {
 
     public TokenResponseDto authorization(UserRequestDto userRequestDto);
 
-    public String checkingUserRole(UserRequestDto userRequestDto);
-    public String changeRole(Long id);
     public List<UserResponseDto> deleteUser(Long id);
 }

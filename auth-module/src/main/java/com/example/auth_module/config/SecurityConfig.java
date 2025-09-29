@@ -35,7 +35,8 @@ public class SecurityConfig {
                     "/api/auth/authorization",
                     "/v3/api-docs/**",
                     "/api/auth/me",
-                    "/swagger-ui/**"
+                    "/swagger-ui/**",
+                    "/swagger-ui.html"
                 ).permitAll()             // открытые эндпоинты
                 .anyRequest().authenticated() // всё остальное требует токен
             )

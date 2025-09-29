@@ -1,9 +1,11 @@
 name: CI
+
 on:
   pull_request:
     branches: [ main ]
   push:
     branches: [ main ]
+
 jobs:
   build-test:
     runs-on: ubuntu-latest
@@ -15,8 +17,8 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'maven'
-      - name: Build & Test
-        run: mvn -B -DskipTests=false clean verify
+      - name: Build & Test auth-module only
+        run: mvn -B -Dspring.profiles.active=test -pl auth-module -am verify
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4

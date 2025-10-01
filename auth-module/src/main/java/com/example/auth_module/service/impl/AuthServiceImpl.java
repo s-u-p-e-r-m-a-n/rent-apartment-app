@@ -7,6 +7,7 @@ import com.example.auth_module.dto.UserResponseDto;
 import com.example.auth_module.exception.UserException;
 import com.example.auth_module.mapper.AuthMapper;
 import com.example.auth_module.model.UserEntity;
+import com.example.auth_module.service.RefreshTokenService;
 import com.example.auth_module.repository.UserRepository;
 import com.example.auth_module.service.AuthService;
 import com.example.auth_module.service.EmailSenderIntegrationService;
@@ -32,6 +33,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     public static final String VERIFICATION_EQUALS = "verified";
+    private final RefreshTokenService refreshTokenService;
 
 
     @Override
@@ -88,10 +90,24 @@ public class AuthServiceImpl implements AuthService {
 
         // если уже верифицирован
         if (VERIFICATION_EQUALS.equals(userEntityByLogin.getVerification())) {
-            String accessToken = jwtService.generateToken(userEntityByLogin.getLogin(), userEntityByLogin.getRoles());
+            // access
+            String accessToken = jwtService.generateToken(
+                userEntityByLogin.getLogin(),
+                userEntityByLogin.getRoles()
+            );
             long accessExp = jwtService.getExpiryEpochMillis(accessToken);
-            return new TokenResponseDto(accessToken, Instant.ofEpochMilli(accessExp));
+
+
+            var refresh = refreshTokenService.issue(userEntityByLogin);
+
+
+            return new TokenResponseDto(
+                accessToken,
+                Instant.ofEpochMilli(accessExp),
+                refresh.getToken()
+            );
         }
+
 
         // ещё не верифицирован
         if (userRequestDto.code() == null) {
@@ -114,9 +130,18 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(userEntityByLogin);
 
         // 5) выдаём токен (не сохраняем его в БД)
+        // стало (добавляем refresh):
         String accessToken = jwtService.generateToken(userEntityByLogin.getLogin(), roles);
         long accessExp = jwtService.getExpiryEpochMillis(accessToken);
-        return new TokenResponseDto(accessToken, Instant.ofEpochMilli(accessExp));
+
+
+        var refresh = refreshTokenService.issue(userEntityByLogin);
+
+        return new TokenResponseDto(
+            accessToken,
+            Instant.ofEpochMilli(accessExp),
+            refresh.getToken()
+        );
     }
 
 

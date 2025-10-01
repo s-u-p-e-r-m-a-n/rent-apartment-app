@@ -265,7 +265,20 @@ public class AuthController {
         description = "Первый вход требует 4-значный код. Возвращает JWT."
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "200", description = "OK",
+            content = @Content(mediaType = "application/json",
+                schema   = @Schema(implementation = TokenResponseDto.class),
+                examples = @ExampleObject(
+                    name = "login-success",
+                    value = """
+                {
+                  "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+                  "accessTokenExpiresAt": "2025-09-30T12:00:00Z",
+                  "refreshToken": "6f5e8e0a-3d0a-4cda-b02d-9b1e3c6d89f4"
+                }
+                """
+                )
+            )),
 
         @ApiResponse(responseCode = "400",
             content = @Content(mediaType = "application/json",

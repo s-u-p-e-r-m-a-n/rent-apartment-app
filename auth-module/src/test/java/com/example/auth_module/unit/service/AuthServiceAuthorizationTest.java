@@ -3,13 +3,13 @@ package com.example.auth_module.unit.service;
 import com.example.auth_module.dto.TokenResponseDto;
 import com.example.auth_module.dto.UserRequestDto;
 import com.example.auth_module.exception.UserException;
+import com.example.auth_module.model.RefreshToken;
 import com.example.auth_module.model.UserEntity;
 import com.example.auth_module.repository.UserRepository;
-import com.example.auth_module.service.EmailSenderIntegrationService;
+import com.example.auth_module.service.RefreshTokenService;
 import com.example.auth_module.service.ValidService;
 import com.example.auth_module.service.impl.AuthServiceImpl;
 import com.example.auth_module.service.security.JwtService;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Optional;
@@ -32,24 +33,26 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class AuthServiceAuthorizationTest {
 
-    @Mock private ValidService validService;
-    @Mock private UserRepository userRepository;
-    @Mock private EntityManager entityManager;
-    @Mock private EmailSenderIntegrationService emailSenderIntegrationService;
-    @Mock private PasswordEncoder passwordEncoder;
-    @Mock private JwtService jwtService;
+    @Mock
+    private ValidService validService;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
+    @Mock
+    private JwtService jwtService;
+    @Mock
+    private RefreshTokenService refreshTokenService;
 
     @InjectMocks
     private AuthServiceImpl authService;
-
     private UserRequestDto userRequestDto;
     private UserEntity userEntity;
-
     private static final String VERIFICATION_EQUALS = "verified";
 
     @BeforeEach
     void setUp() {
-        userRequestDto = new UserRequestDto("test@mail","Serega","123456","1234");
+        userRequestDto = new UserRequestDto("test@mail", "Serega", "123456", "1234");
 
         userEntity = new UserEntity();
         userEntity.setLogin("test@mail");
@@ -67,10 +70,22 @@ public class AuthServiceAuthorizationTest {
         when(userRepository.findByLoginCriteria(anyString()))
             .thenReturn(Optional.of(userEntity));
         when(passwordEncoder.matches("123456", "$hash123")).thenReturn(true);
-        when(jwtService.generateToken(eq("test@mail"), any()))
+        when(jwtService.generateToken(eq(userEntity.getLogin()), any()))
             .thenReturn("jwt-abc");
         when(jwtService.getExpiryEpochMillis("jwt-abc"))
             .thenReturn(123456789L);
+        Instant rtExp = Instant.parse("2030-01-01T00:00:00Z");
+        Instant rtCreated = Instant.parse("2030-01-01T00:00:00Z");
+        when(refreshTokenService.issue(any(UserEntity.class)))
+            .thenReturn(RefreshToken.builder()
+                .user(userEntity)
+                .token("ref-123")
+                .expiresAt(rtExp)
+                .createdAt(rtCreated)
+                .revoked(false)
+                .build());
+
+
 
         TokenResponseDto result = authService.authorization(userRequestDto);
 
@@ -80,11 +95,15 @@ public class AuthServiceAuthorizationTest {
         UserEntity saved = userCaptor.getValue();
         assertTrue(saved.getRoles().contains(UserEntity.Role.USER));
         assertEquals(VERIFICATION_EQUALS, saved.getVerification());
+        verify(refreshTokenService).issue(eq(userEntity));
+        verify(jwtService).generateToken(eq("test@mail"), any());
+
 
 
         assertNotNull(result);
         assertEquals("jwt-abc", result.accessToken());
         assertEquals(Instant.ofEpochMilli(123456789L), result.accessTokenExpiresAt());
+        assertEquals("ref-123", result.refreshToken());
     }
 
     @DisplayName("не корректный логин")
@@ -117,7 +136,7 @@ public class AuthServiceAuthorizationTest {
     @DisplayName("Не подтвержденный email (неверный код)")
     @Test
     void testAuthorizationIncorrectCodeValue() {
-        UserRequestDto bad = new UserRequestDto("test@mail","Serega","123456","123");
+        UserRequestDto bad = new UserRequestDto("test@mail", "Serega", "123456", "123");
 
 
         when(validService.validation(anyString())).thenReturn(bad.loginValue());

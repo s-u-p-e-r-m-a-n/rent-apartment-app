@@ -13,7 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableMethodSecurity   // включает @PreAuthorize
+@EnableMethodSecurity(prePostEnabled = true)  // включает @PreAuthorize
 
 public class SecurityConfig {
 

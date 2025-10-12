@@ -10,8 +10,10 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
+import java.util.Map;
 
 @Log4j2
 @RestControllerAdvice
@@ -97,6 +99,18 @@ public class UserExceptionHandler {
             .reduce((a, b) -> a + "; " + b).orElse("Validation failed");
         return ResponseEntity.status(st).body(build(st, msg, req.getRequestURI()));
     }
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<Map<String, Object>> handleResponseStatusException(
+        org.springframework.web.server.ResponseStatusException ex,
+        jakarta.servlet.http.HttpServletRequest request
+    ) {
+        var body = new java.util.LinkedHashMap<String, Object>();
+        body.put("error", ex.getReason() != null ? ex.getReason() : "Error");
+        body.put("status", ex.getStatusCode().value());
+        body.put("path", request.getRequestURI());
+        body.put("timestamp", java.time.Instant.now().toString());
+        return ResponseEntity.status(ex.getStatusCode()).body(body);
+    }
 
     // === Остальное → 500 ===
     @ExceptionHandler(Exception.class)
@@ -120,7 +134,7 @@ public class UserExceptionHandler {
         if (code >= 400 && code <= 599) {
             try {
                 return HttpStatus.valueOf(code);
-            } catch (Exception ignored) { /* fallthrough */ }
+            } catch (Exception ignored) {  }
         }
         return HttpStatus.BAD_REQUEST;
     }

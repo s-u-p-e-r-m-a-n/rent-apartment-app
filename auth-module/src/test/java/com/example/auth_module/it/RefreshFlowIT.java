@@ -89,6 +89,7 @@ class RefreshFlowIT extends BaseIT {
         Map body = resp.getBody();
         assertThat(body).isNotNull();
         assertThat(body.get("status")).isEqualTo(401);
+        assertThat(body.get("error")).isEqualTo("Invalid or expired refresh token");
         assertThat(String.valueOf(body.get("path"))).isEqualTo("/api/auth/refresh");
     }
 

@@ -116,7 +116,7 @@ public class AuthServiceAuthorizationTest {
 
         UserException ex = assertThrows(UserException.class,
             () -> authService.authorization(userRequestDto));
-        assertEquals("Пользователь не существует", ex.getMessage()); // USER_DOёES_NOT_EXIST
+        assertEquals("Пользователь не существует", ex.getMessage()); // USER_DOES_NOT_EXIST
         verify(userRepository, times(1)).findByLoginCriteria(anyString());
         verifyNoMoreInteractions(userRepository);
     }

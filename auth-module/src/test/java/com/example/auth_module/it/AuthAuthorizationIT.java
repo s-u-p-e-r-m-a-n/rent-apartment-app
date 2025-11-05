@@ -47,6 +47,7 @@ public class AuthAuthorizationIT extends BaseIT {
         var body = resp.getBody();
         assertThat(body).isNotNull();
         assertThat(body.accessToken()).isNotBlank();
+        assertThat(resp.getBody().refreshToken()).isNotBlank();
 
         //Лёгкая проверка токена: формат + payload
         String token = body.accessToken();

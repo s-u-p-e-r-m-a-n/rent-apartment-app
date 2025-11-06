@@ -2,9 +2,10 @@ package com.example.auth_module.service.impl;
 
 import com.example.auth_module.dto.SenderDto;
 import com.example.auth_module.service.EmailSenderIntegrationService;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
+@Profile("!docker")
 @Service
 public class EmailSenderIntegrationServiceImpl implements EmailSenderIntegrationService {
 

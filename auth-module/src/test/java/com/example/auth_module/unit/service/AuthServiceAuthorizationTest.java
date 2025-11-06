@@ -21,10 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -160,7 +157,9 @@ public class AuthServiceAuthorizationTest {
         user.setVerification("1234");
         user.setRoles(Set.of(UserEntity.Role.USER));
 
-        when(userRepository.findByLoginCriteria(dto.loginValue()))
+        when(validService.validation(dto.loginValue()))
+            .thenReturn(dto.loginValue());
+        when(userRepository.findByLoginCriteria(dto.loginValue().toLowerCase(Locale.ROOT)))
             .thenReturn(Optional.of(user));
         when(passwordEncoder.matches(dto.passwordValue(), "encoded"))
             .thenReturn(false); // пароль не совпал
@@ -194,8 +193,12 @@ public class AuthServiceAuthorizationTest {
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setToken("token-123");
 
-        when(userRepository.findByLoginCriteria(dto.loginValue()))
+        when(validService.validation(dto.loginValue()))
+            .thenReturn(dto.loginValue());
+
+        when(userRepository.findByLoginCriteria(dto.loginValue().toLowerCase(Locale.ROOT)))
             .thenReturn(Optional.of(user));
+
         when(passwordEncoder.matches(dto.passwordValue(), "123456"))
             .thenReturn(true);
         when(jwtService.generateToken(eq(user.getLogin()), any())).thenReturn("jwt-abc");
@@ -227,8 +230,10 @@ public class AuthServiceAuthorizationTest {
         user.setPasswordHash("123456");
         user.setVerification("1234");
         user.setRoles(Set.of(UserEntity.Role.USER));
+        when(validService.validation(dto.loginValue()))
+            .thenReturn(dto.loginValue());
 
-        when(userRepository.findByLoginCriteria(dto.loginValue()))
+        when(userRepository.findByLoginCriteria(dto.loginValue().toLowerCase(Locale.ROOT)))
             .thenReturn(Optional.of(user));
         when(passwordEncoder.matches(dto.passwordValue(), "123456"))
             .thenReturn(true);
@@ -257,7 +262,10 @@ public class AuthServiceAuthorizationTest {
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setToken("token-123");
 
-        when(userRepository.findByLoginCriteria(dto.loginValue()))
+        when(validService.validation(dto.loginValue()))
+            .thenReturn(dto.loginValue());
+
+        when(userRepository.findByLoginCriteria(dto.loginValue().toLowerCase(Locale.ROOT)))
             .thenReturn(Optional.of(user));
         when(passwordEncoder.matches(dto.passwordValue(), "123456"))
             .thenReturn(true);

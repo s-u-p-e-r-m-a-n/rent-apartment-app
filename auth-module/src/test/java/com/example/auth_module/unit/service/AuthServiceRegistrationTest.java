@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
@@ -142,7 +143,8 @@ public class AuthServiceRegistrationTest {
             null
         );
 
-
+        when(validService.validation(dto.loginValue()))
+            .thenReturn(dto.loginValue());
         when(userRepository.findByEmailJpql(dto.loginValue()))
             .thenReturn(Optional.of(new UserEntity()));
 

@@ -21,3 +21,9 @@ Thumbs.db
 
 # Docker
 *.pid
+
+
+.mvn/
+.git/
+./.env
+

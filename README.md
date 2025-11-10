@@ -132,13 +132,13 @@ cd rent_apartment_app
 Создай файл .env в корне по аналогии с .env.example (используется для auth-module):
 
 bash
-Копировать код
+
 cp .env.example .env
 Пример содержимого — см. в auth-module/README.md.
 
 4. Поднять базу и auth-module через Docker
 bash
-Копировать код
+
 docker compose up --build -d
 После успешного старта:
 

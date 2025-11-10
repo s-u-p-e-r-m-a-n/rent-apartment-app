@@ -22,66 +22,53 @@
 
 ## 🧰 Технологии
 
-| Компонент | Используется |
-|------------|--------------|
-| **Java** | 21 |
-| **Spring Boot** | 3.2.10 |
-| **Spring Data JPA** | ✔ |
-| **Spring Security** | JWT-безопасность |
-| **Spring Validation** | проверка входных DTO |
-| **Flyway** | миграции базы |
-| **PostgreSQL** | основная БД |
-| **JJWT 0.12.6** | работа с JWT |
-| **Swagger (Springdoc)** | API-документация |
-| **JUnit 5 / Mockito / Testcontainers** | тестирование |
-| **Docker / Compose** | контейнеризация |
-| **Lombok / MapStruct** | генерация и маппинг DTO |
-| **Eureka Client (Netflix)** | зависимость добавлена, отключена в Docker-профиле |
+| Компонент | Статус | Описание |
+|------------|--------|-----------|
+| **Java** | ✅ | Версия 21 |
+| **Spring Boot** | ✅ | 3.2.10 |
+| **Spring Data JPA** | ✅ | Работа с PostgreSQL |
+| **Spring Security** | ✅ | JWT-аутентификация |
+| **Spring Validation** | ✅ | Проверка входных DTO |
+| **Flyway** | ✅ | Миграции базы |
+| **PostgreSQL** | ✅ | Основная БД |
+| **JJWT 0.12.6** | ✅ | Работа с JWT |
+| **Swagger (Springdoc)** | ✅ | API-документация |
+| **JUnit 5 / Mockito / Testcontainers** | ✅ | Тестирование |
+| **Docker / Compose** | ✅ | Контейнеризация |
+| **Lombok / MapStruct** | ✅ | Генерация и маппинг DTO |
+| **Eureka Client (Netflix)** | ⚙️ | Подключен, но отключен в Docker-профиле |
 
 ---
 
 ## 🧱 Архитектура проекта (основные файлы и директории)
 
+```text
 auth-module/
-
 ├── src/main/java/com/example/auth_module/
-
-│ ├──config/  # классы конфиги
-
-│ ├── controller/ # REST-контроллеры
-
-│ ├── service/ # Сервисы (бизнес-логика)
-
-│ │ ├── impl/ # Реализация сервисов
-
-│ │ └── security/ # JWT, фильтры, конфиг
-
-│ ├── model/ # JPA-сущности
-
-│ ├── dto/ # DTO (запросы, ответы)
-
-│ ├── repository/ # Репозитории Spring Data
-
-│ └── exception/ # UserException и ApiError
-
+│   ├── config/           # классы конфигурации
+│   ├── controller/       # REST-контроллеры
+│   ├── service/          # Сервисы (бизнес-логика)
+│   │   ├── impl/         # Реализация сервисов
+│   │   └── security/     # JWT, фильтры, конфигурация
+│   ├── model/            # JPA-сущности
+│   ├── dto/              # DTO (запросы, ответы)
+│   ├── repository/       # Репозитории Spring Data
+│   └── exception/        # UserException и ApiError
 ├── src/main/resources/
-
-│ ├── application-docker.properties
-
-│ └── db/migration/postgres/
-
-│ ├── V1__create_table_user_info.sql
-
-│ ├── ...
-
-│ └── V14__create_super_admin.sql
-
+│   ├── application-docker.properties
+│   └── db/migration/postgres/
+│       ├── V1__create_table_user_info.sql
+│       ├── ...
+│       └── V14__create_super_admin.sql
 └── Dockerfile
 
 
+yaml
+Копировать код
+
 ---
 
-## 🚀 Быстрый старт (Docker)
+## 🚀 Запуск сервиса (Docker)
 
 ### 1. Подготовь `.env`
 
@@ -92,7 +79,7 @@ cp .env.example .env
 Пример .env.example:
 
 env
-
+Копировать код
 # База данных
 POSTGRES_DB=postgres
 POSTGRES_USER=root
@@ -103,29 +90,26 @@ JWT_SECRET=ChangeMe_ThisIsA_VeryLongSecretKey_AtLeast32Chars
 
 # Настройки сервиса
 AUTH_SERVER_PORT=8081
-2. Собери и запусти
-
-docker compose build
-docker compose up -d
-
+2. Собери и запусти контейнеры
+bash
+Копировать код
+docker compose up --build -d
 3. Проверка
-Swagger UI:
-👉 http://localhost:8081/swagger-ui/index.html
+Swagger UI → http://localhost:8081/swagger-ui/index.html
 
-Логи:
+Просмотр логов:
 
+bash
+Копировать код
 docker compose logs -f auth-module
 🧩 Flyway миграции и SUPER_ADMIN
-При запуске в Docker автоматически выполняются все Flyway-скрипты.
-
-Путь:
+При запуске в Docker автоматически выполняются все Flyway-скрипты:
 auth-module/src/main/resources/db/migration/postgres/
 
-🔹 Скрипт V14__create_super_admin.sql
-Этот скрипт создаёт суперпользователя:
+Скрипт V14__create_super_admin.sql создаёт суперпользователя:
 
-
-
+sql
+Копировать код
 -- Создаём SUPER_ADMIN
 INSERT INTO user_info (id, date_registration, login, password_hash, username, verification)
 VALUES (
@@ -144,13 +128,12 @@ VALUES (1, 'SUPER_ADMIN')
 ON CONFLICT (user_id, roles) DO NOTHING;
 Данные суперпользователя:
 
-username	    SUPER_ADMIN
-login	        superadmin@mail.com
-password:       Admin123!
-roles	        SUPER_ADMIN
-verification	"verified"
-
-
+Поле	Значение
+username	SUPER_ADMIN
+login	superadmin@mail.com
+password	Admin123!
+roles	SUPER_ADMIN
+verification	verified
 
 💡 Этот пользователь создаётся автоматически при первом старте контейнера.
 Можно использовать для входа и смены ролей обычных пользователей.
@@ -165,95 +148,89 @@ POST	/refresh	Обновление JWT токена
 PATCH	/admin/{id}/role	Изменение роли пользователя (только ADMIN / SUPER_ADMIN)
 
 📬 Пример регистрации
-POST /api/auth/registration
-
 json
-
+Копировать код
+POST /api/auth/registration
 {
   "usernameValue": "Alex",
   "loginValue": "alex@mail.com",
-  "passwordValue": "123456"
-  "code": "" //поле код при регистрации пустое,заполняется при авторизации
+  "passwordValue": "123456",
+  "code": ""
 }
 Ответ:
 
 json
-
+Копировать код
 "код отправлен"
 В демо-режиме письмо не уходит, код логируется в консоль (mock email sender).
 
 🔐 Авторизация
-POST /api/auth/authorization
-
 json
-
+Копировать код
+POST /api/auth/authorization
 {
   "usernameValue": "Alex",
   "loginValue": "alex@mail.com",
-  "passwordValue": "123456"
-  "code": "4321" // код из лога иммитация отправки кода на e-mail
-  
+  "passwordValue": "123456",
+  "code": "4321"
 }
 Ответ:
 
 json
-
+Копировать код
 {
   "accessToken": "jwt-token",
   "refreshToken": "refresh-token",
   "expiryTime": 1730482000
 }
 🔄 Обновление токена
-POST /api/auth/refresh
-
 json
-
+Копировать код
+POST /api/auth/refresh
 {
   "refreshToken": "refresh-token"
 }
 Ответ:
 
 json
-
+Копировать код
 {
   "accessToken": "new-jwt",
   "refreshToken": "new-refresh"
 }
 ⚙️ Смена роли
-PATCH /api/auth/admin/{id}/role
-
-Тело запроса:
-
 json
-
+Копировать код
+PATCH /api/auth/admin/{id}/role
 {
   "role": "ADMIN"
 }
 🧠 Тестирование
 Запуск всех тестов:
 
-
+bash
+Копировать код
 cd auth-module
 mvn test
 Генерация отчёта покрытия (JaCoCo):
 
-
-
+bash
+Копировать код
 mvn verify
 Результат:
 auth-module/target/site/jacoco/index.html
 
 Покрыты:
 
-AuthServiceImpl — все ветви регистрации и авторизации
+AuthServiceImpl — регистрация и авторизация;
 
-RefreshTokenService — ротация и ошибки
+RefreshTokenService — ротация токенов;
 
-UserAdminServiceImpl — смена роли
+UserAdminServiceImpl — смена ролей;
 
-UserExceptionHandler — ошибки MVC
+UserExceptionHandler — MVC-ошибки;
 
-контроллеры через @WebMvcTest
+Контроллеры через @WebMvcTest.
 
 📘 Swagger UI
 Полная документация API доступна после запуска:
@@ -266,28 +243,27 @@ Swagger включает:
 
 Описания DTO (UserRequestDto, TokenResponseDto, SenderDto).
 
-Глобальные ошибки (ApiError из UserExceptionHandler).
+Глобальные ошибки (ApiError).
 
 Примеры статус-кодов (200, 401, 409, 502).
 
-🧩 Интеграция с другими сервисами
-Eureka — уже подключён (spring-cloud-starter-netflix-eureka-client),
-но отключён в application-docker.properties, чтобы не мешал локальной сборке.
+🔗 Интеграция в монорепозиторий
+Модуль может использоваться как:
 
-Email-sender — в продакшн-сборке будет отдельным сервисом,
-сейчас используется заглушка, возвращающая "код отправлен".
+самостоятельный Auth-сервис;
 
-Architect-module (Flyway) — при упаковке в Docker миграции копируются в образ auth-module.
+часть монорепозитория Rent Apartment App
+(в связке с rent_module, email-sender, gateway, eureka-server).
+
+При необходимости сервис регистрируется в Eureka и проксируется через API Gateway.
 
 🧾 Обработка ошибок
-Все исключения централизованы:
-
-UserExceptionHandler → ApiError
+Все исключения централизованы через UserExceptionHandler → ApiError.
 
 Пример ответа:
 
 json
-
+Копировать код
 {
   "error": "Invalid or expired refresh token",
   "code": 401,
@@ -299,22 +275,17 @@ json
 Ошибка	Код	Сообщение
 Повторная регистрация	409	"Пользователь с таким логином уже существует"
 Некорректный e-mail	400	"Invalid email format"
-Неверный пароль	        401	"Unauthorized"
+Неверный пароль	401	"Unauthorized"
 Просроченный токен	401	"Invalid or expired refresh token"
 Ошибка интеграции	502	"Error send message"
 
-<!--
-## 🧩 Разработчик
-
-**Sergey A. — Java Backend Developer**  
-GitHub: [SergeyJavaDev](https://github.com/SergeyJavaDev)  
-FL.ru: [sergeyjavadev](https://www.fl.ru/users/sergeyjavadev/)
--->
-
-
+👨‍💻 Разработчик
+Sergey A. — Java Backend Developer
+GitHub → SergeyJavaDev
+FL.ru → sergeyjavadev
 
 📄 Лицензия
-Проект распространяется под MIT License
+Проект распространяется под MIT License.
 Разрешается использовать код для pet- и учебных целей.
 
 💬 Примечание

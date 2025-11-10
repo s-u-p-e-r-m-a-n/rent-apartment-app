@@ -63,9 +63,6 @@ auth-module/
 └── Dockerfile
 
 
-yaml
-Копировать код
-
 ---
 
 ## 🚀 Запуск сервиса (Docker)
@@ -74,12 +71,12 @@ yaml
 
 Создай файл `.env` в корне проекта на основе `.env.example`:
 
-```bash
 cp .env.example .env
+
 Пример .env.example:
 
 env
-Копировать код
+
 # База данных
 POSTGRES_DB=postgres
 POSTGRES_USER=root
@@ -91,25 +88,26 @@ JWT_SECRET=ChangeMe_ThisIsA_VeryLongSecretKey_AtLeast32Chars
 # Настройки сервиса
 AUTH_SERVER_PORT=8081
 2. Собери и запусти контейнеры
-bash
-Копировать код
+
 docker compose up --build -d
+
 3. Проверка
+
 Swagger UI → http://localhost:8081/swagger-ui/index.html
 
 Просмотр логов:
 
-bash
-Копировать код
 docker compose logs -f auth-module
+
 🧩 Flyway миграции и SUPER_ADMIN
 При запуске в Docker автоматически выполняются все Flyway-скрипты:
+
 auth-module/src/main/resources/db/migration/postgres/
 
 Скрипт V14__create_super_admin.sql создаёт суперпользователя:
 
 sql
-Копировать код
+
 -- Создаём SUPER_ADMIN
 INSERT INTO user_info (id, date_registration, login, password_hash, username, verification)
 VALUES (
@@ -128,11 +126,11 @@ VALUES (1, 'SUPER_ADMIN')
 ON CONFLICT (user_id, roles) DO NOTHING;
 Данные суперпользователя:
 
-Поле	Значение
+Поле	        Значение
 username	SUPER_ADMIN
-login	superadmin@mail.com
+login	        superadmin@mail.com
 password	Admin123!
-roles	SUPER_ADMIN
+roles	        SUPER_ADMIN
 verification	verified
 
 💡 Этот пользователь создаётся автоматически при первом старте контейнера.
@@ -142,14 +140,14 @@ verification	verified
 Базовый путь: /api/auth
 
 Метод	URL	Описание
-POST	/registration	Регистрация нового пользователя
-POST	/authorization	Авторизация (логин + пароль)
-POST	/refresh	Обновление JWT токена
-PATCH	/admin/{id}/role	Изменение роли пользователя (только ADMIN / SUPER_ADMIN)
+POST	/registration	  Регистрация нового пользователя
+POST	/authorization	  Авторизация (логин + пароль)
+POST	/refresh	  Обновление JWT токена
+PATCH	/admin/{id}/role  Изменение роли пользователя (только ADMIN / SUPER_ADMIN)
 
 📬 Пример регистрации
 json
-Копировать код
+
 POST /api/auth/registration
 {
   "usernameValue": "Alex",
@@ -160,13 +158,13 @@ POST /api/auth/registration
 Ответ:
 
 json
-Копировать код
+
 "код отправлен"
-В демо-режиме письмо не уходит, код логируется в консоль (mock email sender).
+В демо-режиме письмо не уходит (mock email sender), код логируется в консоль, где из консоли нужно скопировать
+ код при авторизаци и вписать в поле "code".
 
 🔐 Авторизация
-json
-Копировать код
+
 POST /api/auth/authorization
 {
   "usernameValue": "Alex",
@@ -177,7 +175,7 @@ POST /api/auth/authorization
 Ответ:
 
 json
-Копировать код
+
 {
   "accessToken": "jwt-token",
   "refreshToken": "refresh-token",
@@ -185,7 +183,7 @@ json
 }
 🔄 Обновление токена
 json
-Копировать код
+
 POST /api/auth/refresh
 {
   "refreshToken": "refresh-token"
@@ -193,14 +191,14 @@ POST /api/auth/refresh
 Ответ:
 
 json
-Копировать код
+
 {
   "accessToken": "new-jwt",
   "refreshToken": "new-refresh"
 }
 ⚙️ Смена роли
 json
-Копировать код
+
 PATCH /api/auth/admin/{id}/role
 {
   "role": "ADMIN"
@@ -209,13 +207,13 @@ PATCH /api/auth/admin/{id}/role
 Запуск всех тестов:
 
 bash
-Копировать код
+
 cd auth-module
 mvn test
 Генерация отчёта покрытия (JaCoCo):
 
 bash
-Копировать код
+
 mvn verify
 Результат:
 auth-module/target/site/jacoco/index.html
@@ -263,7 +261,7 @@ Swagger включает:
 Пример ответа:
 
 json
-Копировать код
+
 {
   "error": "Invalid or expired refresh token",
   "code": 401,
@@ -272,10 +270,10 @@ json
 }
 Типы ошибок:
 
-Ошибка	Код	Сообщение
+Ошибка	                Код	 Сообщение
 Повторная регистрация	409	"Пользователь с таким логином уже существует"
 Некорректный e-mail	400	"Invalid email format"
-Неверный пароль	401	"Unauthorized"
+Неверный пароль	        401	"Unauthorized"
 Просроченный токен	401	"Invalid or expired refresh token"
 Ошибка интеграции	502	"Error send message"
 

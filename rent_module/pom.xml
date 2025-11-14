@@ -21,7 +21,7 @@
         <!-- Согласовано: Boot 3.4.x + Cloud 2024.0.x -->
         <spring-boot.version>3.4.1</spring-boot.version>
         <spring-cloud.version>2024.0.0</spring-cloud.version>
-        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
         <lombok.version>1.18.34</lombok.version>
     </properties>
 

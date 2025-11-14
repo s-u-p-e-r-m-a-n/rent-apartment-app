@@ -19,7 +19,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -128,6 +130,38 @@ public class AuthServiceRegistrationTest {
         when(emailSenderIntegrationService.sendCodeVerification(any())).thenThrow(new UserException("ошибка код не отправлен", 666));
 
         assertThrows(UserException.class, () -> authService.registration(userRequestDto));
-
     }
+
+    @DisplayName("registration: дубликат e-mail/login -> 409 (REGISTRATION_WITH_LOGIN_FAILED), без save и без отправки письма")
+    @Test
+    void registration_conflictLogin_throws409() {
+
+        UserRequestDto dto = new UserRequestDto(
+            "Serega",
+            "test@mail.ru",
+            "123456",
+            null
+        );
+
+        when(validService.validation(dto.loginValue()))
+            .thenReturn(dto.loginValue());
+        when(userRepository.findByEmailJpql(dto.loginValue()))
+            .thenReturn(Optional.of(new UserEntity()));
+
+
+        UserException ex = assertThrows(
+            UserException.class,
+            () -> authService.registration(dto)
+        );
+
+
+        assertEquals(409, ex.getErrorCode());
+        assertTrue(ex.getMessage().contains("Пользователь с таким логином существует"));
+
+        verify(userRepository).findByEmailJpql(dto.loginValue());
+        verify(userRepository, never()).save(any());
+        verify(emailSenderIntegrationService, never()).sendCodeVerification(new SenderDto("test@mail.ru","3241"));
+    }
+
+
 }

@@ -25,7 +25,7 @@ public class SendEmailServiceImpl implements SendEmailService {
         simpleMailMessage.setTo(email);//кому
         simpleMailMessage.setSubject(SUBJECT);//тема
         simpleMailMessage.setText(TEXT_MAIL + code);//содержимое письма
-        simpleMailMessage.setFrom("batmaan01@yandex.ru");
+        simpleMailMessage.setFrom("example@yandex.ru");
         mailSender.send(simpleMailMessage);
         return "проверьте Email";
     }

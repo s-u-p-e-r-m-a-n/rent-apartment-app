@@ -1,61 +1,53 @@
-version: "3.9"
+
 
 services:
-  rent_db:
-    image: postgres
-    restart: always
-    environment:
-      - POSTGRES_DB=rent_apartment_db
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-    volumes:
-      - db:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
+    rent_db:
+        image: postgres:15
+        container_name: rent_db
+        restart: always
+        env_file:
+            - .env
+        environment:
+            POSTGRES_DB: ${DB_NAME}
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASS}
+        volumes:
+            - db:/var/lib/postgresql/data
+        ports:
+            - "5433:5432"
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+            interval: 5s
+            timeout: 3s
+            retries: 10
+    auth-module:
+        build:
+            context: .
+            dockerfile: auth-module/Dockerfile
+        container_name: auth-module
+        restart: always
+        depends_on:
+            - rent_db
+        env_file:
+            - .env
+        environment:
+
+            DB_HOST: ${DB_HOST}
+            DB_PORT: ${DB_PORT}
+            DB_NAME: ${DB_NAME}
+            DB_USER: ${DB_USER}
+            DB_PASS: ${DB_PASS}
+
+            SPRING_PROFILES_ACTIVE: docker
+
+
+
+            # если  Eureka:
+            # EUREKA_URI: ${EUREKA_URI}
+        ports:
+           - "${SERVER_PORT}:${SERVER_PORT}"
 
 volumes:
-  db:
-    # это настройка под упаковку сервиса в докер связь между контейнерами
-#version: "3.9"
-#
-#services:
-#  rent_db:
-#    image: postgres:latest  # или конкретная версия, например postgres:13
-#    container_name: rent_db
-#    restart: always
-#    environment:
-#      POSTGRES_DB: rent_apartment_db
-#      POSTGRES_USER: root
-#      POSTGRES_PASSWORD: root
-#    volumes:
-#      - db:/var/lib/postgresql/data  # монтируем том для данных
-#    ports:
-#      - "5433:5432"  # внешний порт 5433 → внутренний 5432
-#    networks:
-#      - app_network
-#
-#  auth-service:  # замените на имя вашего приложения
-#
-#    build:
-#        context: ./auth-module  # Путь к папке с Dockerfile
-#        dockerfile: Dockerfile
-#    depends_on:
-#      - rent_db  # гарантирует запуск БД первым
-#    environment:
-#      DB_HOST: rent_db  # имя сервиса БД в сети Docker
-#      DB_PORT: 5432
-#      DB_NAME: rent_apartment_db
-#      DB_USER: root
-#      DB_PASSWORD: root
-#    ports:
-#      - "3700:3700"  # пример для веб-приложения
-#    networks:
-#      - app_network # Создаём общую сеть
-#
-#volumes:
-#  db:
-## external: true  # используем существующий том
-#
-#networks:
-#  app_network:
-#    driver: bridge
+    db:
+
+

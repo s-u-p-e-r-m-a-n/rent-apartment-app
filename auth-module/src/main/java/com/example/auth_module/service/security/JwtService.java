@@ -20,10 +20,10 @@ import java.util.List;
 @Component
 public class JwtService {
     //берем из properties
-    @Value("${jwt.secret}")
+   @Value("${jwt.secret}")
     private String secret;            // >= 32 символов
     //берем из properties
-    @Value("${jwt.ttl-min}")
+  @Value("${jwt.ttl-min}")
     private long ttlMin;              // срок жизни токена (мин)
 
 

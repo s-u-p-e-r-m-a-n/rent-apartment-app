@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 
-public class AuthAuthorizationNegativeIT extends BaseIT {
+public class    AuthAuthorizationNegativeIT extends BaseIT {
 
     @Autowired AuthService authService;
     @Autowired UserRepository userRepository;

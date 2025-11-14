@@ -4,11 +4,15 @@ import com.example.auth_module.dto.UserShortDto;
 import com.example.auth_module.model.UserEntity;
 import com.example.auth_module.repository.UserRepository;
 import com.example.auth_module.service.admin.UserAdminService;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.server.ResponseStatusException;
-
+import com.example.auth_module.config.SecurityConfig;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -22,6 +26,7 @@ import java.util.Set;
  *   • ADMIN может ТОЛЬКО повышать USER->ADMIN.
  *   • Понижать ADMIN->USER может только SUPER_ADMIN.
  */
+@Import(SecurityConfig.class)
 @Service
 public class UserAdminServiceImpl implements UserAdminService {
 
@@ -37,6 +42,8 @@ public class UserAdminServiceImpl implements UserAdminService {
      * @param actorLogin          Логин того, кто делает запрос (из JWT subject)
      * @param actorAuthorities    Набор прав вида ROLE_ADMIN / ROLE_SUPER_ADMIN (из SecurityContext)
      */
+    @PatchMapping("/{id}/role")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @Transactional
     public UserShortDto changeRole(Long targetUserId,
                                    UserEntity.Role targetRole,

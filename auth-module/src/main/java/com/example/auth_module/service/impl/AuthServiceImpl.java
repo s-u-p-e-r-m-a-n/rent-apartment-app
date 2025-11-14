@@ -7,6 +7,7 @@ import com.example.auth_module.dto.UserResponseDto;
 import com.example.auth_module.exception.UserException;
 import com.example.auth_module.mapper.AuthMapper;
 import com.example.auth_module.model.UserEntity;
+import com.example.auth_module.service.RefreshTokenService;
 import com.example.auth_module.repository.UserRepository;
 import com.example.auth_module.service.AuthService;
 import com.example.auth_module.service.EmailSenderIntegrationService;
@@ -32,21 +33,23 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     public static final String VERIFICATION_EQUALS = "verified";
+    private final RefreshTokenService refreshTokenService;
 
 
     @Override
     @Transactional
     public String registration(UserRequestDto userRequestDto) throws UserException {
 
-        validService.validation(userRequestDto.loginValue());
+        String loginValidate =  validService.validation(userRequestDto.loginValue().toLowerCase(Locale.ROOT));
 
-        String loginValidate = userRequestDto.loginValue().toLowerCase(Locale.ROOT);
+        //   String loginValidate = userRequestDto.loginValue().toLowerCase(Locale.ROOT);
         userRepository.findByEmailJpql(loginValidate)
             .ifPresent(u -> {
                 throw new UserException(REGISTRATION_WITH_LOGIN_FAILED, REGISTRATION_WITH_LOGIN_FAILED_CODE);
             });
 
         UserEntity userEntity = authMapper.mappUserDtoToUserEntity(userRequestDto);
+        userEntity.setLogin(loginValidate);
         if (userEntity.getRoles() == null || userEntity.getRoles().isEmpty()) {
             userEntity.setRoles(new HashSet<>(Set.of(UserEntity.Role.GUEST)));
         }
@@ -77,9 +80,8 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public TokenResponseDto authorization(UserRequestDto userRequestDto) {
 
-        validService.validation(userRequestDto.loginValue());
 
-        String loginValidate = userRequestDto.loginValue().toLowerCase(Locale.ROOT);
+        String loginValidate = validService.validation(userRequestDto.loginValue().toLowerCase(Locale.ROOT));
         UserEntity userEntityByLogin = userRepository.findByLoginCriteria(loginValidate)
             .orElseThrow(() -> new UserException(USER_DOES_NOT_EXIST, USER_DOES_NOT_EXIST_CODE));
         if (!passwordEncoder.matches(userRequestDto.passwordValue(), userEntityByLogin.getPasswordHash())) {
@@ -88,10 +90,24 @@ public class AuthServiceImpl implements AuthService {
 
         // если уже верифицирован
         if (VERIFICATION_EQUALS.equals(userEntityByLogin.getVerification())) {
-            String accessToken = jwtService.generateToken(userEntityByLogin.getLogin(), userEntityByLogin.getRoles());
+            // access
+            String accessToken = jwtService.generateToken(
+                userEntityByLogin.getLogin(),
+                userEntityByLogin.getRoles()
+            );
             long accessExp = jwtService.getExpiryEpochMillis(accessToken);
-            return new TokenResponseDto(accessToken, Instant.ofEpochMilli(accessExp));
+
+
+            var refresh = refreshTokenService.issue(userEntityByLogin);
+
+
+            return new TokenResponseDto(
+                accessToken,
+                Instant.ofEpochMilli(accessExp),
+                refresh.getToken()
+            );
         }
+
 
         // ещё не верифицирован
         if (userRequestDto.code() == null) {
@@ -114,9 +130,18 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(userEntityByLogin);
 
         // 5) выдаём токен (не сохраняем его в БД)
+
         String accessToken = jwtService.generateToken(userEntityByLogin.getLogin(), roles);
         long accessExp = jwtService.getExpiryEpochMillis(accessToken);
-        return new TokenResponseDto(accessToken, Instant.ofEpochMilli(accessExp));
+
+
+        var refresh = refreshTokenService.issue(userEntityByLogin);
+
+        return new TokenResponseDto(
+            accessToken,
+            Instant.ofEpochMilli(accessExp),
+            refresh.getToken()
+        );
     }
 
 

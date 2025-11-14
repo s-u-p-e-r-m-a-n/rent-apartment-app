@@ -30,7 +30,7 @@ public record UserRequestDto(
     String passwordValue,
 
 
-    @Pattern(regexp = "^\\d{4}$", message = "Код из 4 цифр")
+
     @Schema(description = "4-значный код подтверждения из письма (для первого входа)", example = "1234")
     String code
 ) {

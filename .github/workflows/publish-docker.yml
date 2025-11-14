@@ -21,7 +21,7 @@ jobs:
                   java-version: '21'
 
             - name: Build JAR
-              run: mvn -B -ntp -DskipTests package
+              run: mvn -B -ntp -DskipTests package -pl auth-module -am
 
             - name: Log in to GHCR
               uses: docker/login-action@v3

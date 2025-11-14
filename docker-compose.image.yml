@@ -1,0 +1,7 @@
+services:
+    auth-module:
+        image: ghcr.io/s-u-p-e-r-m-a-n/rent-apartment-app-auth:v1.0.0
+        # используем готовый образ вместо локальной сборки
+        depends_on:
+            rent_db:
+                condition: service_healthy

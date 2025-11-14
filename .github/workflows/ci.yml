@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ main ]
   push:
-    branches: [ main ]
+    branches: [ develop, main ]
 
 jobs:
   build-test:
@@ -17,11 +17,20 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'maven'
-      - name: Build & Test auth-module only
-        run: mvn -B -Dspring.profiles.active=test -pl auth-module -am verify
-      - name: Upload test reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: surefire-reports
-          path: '**/target/surefire-reports/*.xml'
+      -   name: Build & Test auth-module only
+          run: mvn -B -Dspring.profiles.active=test -pl auth-module -am verify
+
+      -   name: Upload JaCoCo report
+          if: always()
+          uses: actions/upload-artifact@v4
+          with:
+              name: jacoco-report
+              path: '**/target/site/jacoco'
+
+      -   name: Upload test reports
+          if: always()
+          uses: actions/upload-artifact@v4
+          with:
+              name: surefire-reports
+              path: '**/target/surefire-reports/*.xml'
+

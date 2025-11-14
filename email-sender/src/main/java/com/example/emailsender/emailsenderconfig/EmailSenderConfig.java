@@ -26,8 +26,8 @@ public class EmailSenderConfig {
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
         javaMailSender.setHost(host);
-        javaMailSender.setUsername("foryouco@yandex.ru");
-        javaMailSender.setPassword("nuuoujewrayjutbb");
+        javaMailSender.setUsername("example@yandex.ru");
+        javaMailSender.setPassword("uirirhuy");
         javaMailSender.setPort(port);
         Properties javaMailProperties = javaMailSender.getJavaMailProperties();
         javaMailProperties.put("mail.transport.protocol", protocol);

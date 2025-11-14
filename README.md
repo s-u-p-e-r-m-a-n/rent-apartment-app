@@ -183,3 +183,6 @@ Sergey A. — ** Java Backend Developer **
 
 📄 Лицензия
 Проект распространяется под MIT License и может свободно использоваться для учебных и pet-проектов.
+## статус бейдж CI
+![CI](https://github.com/s-u-p-e-r-m-a-n/rent-apartment-app/actions/workflows/ci.yml/badge.svg)
+(https://github.com/s-u-p-e-r-m-a-n/rent-apartment-app/actions/workflows/ci.yml)

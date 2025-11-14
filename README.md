@@ -1,6 +1,13 @@
 
 # 🏠 Rent Apartment App — Java Spring Boot microservices
 
+[![Release](https://img.shields.io/github/v/release/s-u-p-e-r-m-a-n/rent-apartment-app?include_prereleases)](../../releases)
+
+[![CI](https://github.com/s-u-p-e-r-m-a-n/rent-apartment-app/actions/workflows/ci.yml/badge.svg)](https://github.com/s-u-p-e-r-m-a-n/rent-apartment-app/actions/workflows/ci.yml)
+
+
+
+
 Монорепозиторий pet-проекта сервиса аренды жилья.  
 Архитектура на базе микросервисов: отдельный модуль авторизации, модуль работы с апартаментами, сервис отправки писем, API Gateway и сервис-дискавери (Eureka).
 
@@ -194,6 +201,4 @@ Sergey A. — ** Java Backend Developer **
 
 📄 Лицензия
 Проект распространяется под MIT License и может свободно использоваться для учебных и pet-проектов.
-## статус бейдж CI
-![CI](https://github.com/s-u-p-e-r-m-a-n/rent-apartment-app/actions/workflows/ci.yml/badge.svg)
-(https://github.com/s-u-p-e-r-m-a-n/rent-apartment-app/actions/workflows/ci.yml)
+

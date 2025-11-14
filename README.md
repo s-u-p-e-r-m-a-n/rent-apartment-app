@@ -178,7 +178,8 @@ Swagger UI для Auth:
 Sergey A. — ** Java Backend Developer **
 
 - GitHub: [SergeyJavaDev](https://github.com/s-u-p-e-r-m-a-n/rent-apartment-app.git)
-- FL.ru: [sergeyjavadev](https://www.fl.ru/users/sergeyjavadev/)
+- Email: [sergey.javadev@mail.ru](mailto:sergey.javadev@mail.ru)
+
 
 📄 Лицензия
 Проект распространяется под MIT License и может свободно использоваться для учебных и pet-проектов.

@@ -300,7 +300,7 @@ Swagger включает:
 ## 👨‍💻 Разработчик
 Sergey A. — ** Java Backend Developer **
 - GitHub: [SergeyJavaDev](https://github.com/s-u-p-e-r-m-a-n/rent-apartment-app.git)
-- FL.ru: [sergeyjavadev](https://www.fl.ru/users/sergeyjavadev/)
+- Email: [sergey.javadev@mail.ru](mailto:sergey.javadev@mail.ru)
 
 ---
 ## 📄 Лицензия

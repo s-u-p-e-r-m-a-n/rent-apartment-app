@@ -326,9 +326,9 @@ public class AuthController {
                 name = "Первый вход с кодом",
                 value = """
                     {
-                      "username": "Serega",
-                      "email": "user@example.com",
-                      "password": "Password123!",
+                      "usernameValue": "SUPER_ADMIN",
+                      "loginValue": "superadmin@mail.com",
+                      "passwordValue": "Admin123!",
                       "code": "1234"
                     }
                     """

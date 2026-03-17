@@ -102,7 +102,7 @@
 
 ## 🧰 Технологии и где используются
 
-- **Java 21** — во всех модулях.  
+- **Java 17** — во всех модулях.  
 - **Spring Boot 3.x** — основа для `auth-module`, `rent_module`, `email-sender`, `gateway`, `eureka-server`.  
 - **Spring Security + JWT (JJWT 0.12.6)** — `auth-module` (аутентификация, авторизация, фильтры).  
 - **Spring Data JPA / Hibernate** — `auth-module`, `rent_module`, `architect-module` (работа с PostgreSQL).  
@@ -127,7 +127,7 @@
 
 ### 1. Требования
 
-- JDK 21  
+- JDK 17  
 - Maven 3.9+ (или wrapper)  
 - Docker + Docker Compose
 

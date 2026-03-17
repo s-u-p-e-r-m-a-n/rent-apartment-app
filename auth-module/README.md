@@ -22,20 +22,20 @@
 
 ## 🧰 Технологии
 
-| Компонент | Статус | Описание |
-|------------|--------|-----------|
-| **Java** | ✅ | Версия 21 |
-| **Spring Boot** | ✅ | 3.2.10 |
-| **Spring Data JPA** | ✅ | Работа с PostgreSQL |
-| **Spring Security** | ✅ | JWT-аутентификация |
-| **Spring Validation** | ✅ | Проверка входных DTO |
-| **Flyway** | ✅ | Миграции базы |
-| **PostgreSQL** | ✅ | Основная БД |
-| **JJWT 0.12.6** | ✅ | Работа с JWT |
-| **Swagger (Springdoc)** | ✅ | API-документация |
-| **JUnit 5 / Mockito / Testcontainers** | ✅ | Тестирование |
-| **Docker / Compose** | ✅ | Контейнеризация |
-| **Lombok / MapStruct** | ✅ | Генерация и маппинг DTO |
+| Компонент | Статус | Описание                                |
+|------------|--------|-----------------------------------------|
+| **Java** | ✅ | Версия 17                               |
+| **Spring Boot** | ✅ | 3.2.10                                  |
+| **Spring Data JPA** | ✅ | Работа с PostgreSQL                     |
+| **Spring Security** | ✅ | JWT-аутентификация                      |
+| **Spring Validation** | ✅ | Проверка входных DTO                    |
+| **Flyway** | ✅ | Миграции базы                           |
+| **PostgreSQL** | ✅ | Основная БД                             |
+| **JJWT 0.12.6** | ✅ | Работа с JWT                            |
+| **Swagger (Springdoc)** | ✅ | API-документация                        |
+| **JUnit 5 / Mockito / Testcontainers** | ✅ | Тестирование                            |
+| **Docker / Compose** | ✅ | Контейнеризация                         |
+| **Lombok / MapStruct** | ✅ | Генерация и маппинг DTO                 |
 | **Eureka Client (Netflix)** | ⚙️ | Подключен, но отключен в Docker-профиле |
 
 ---

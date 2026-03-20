@@ -1,0 +1,2 @@
+ALTER TABLE user_info DROP COLUMN IF EXISTS token;
+ALTER TABLE user_info DROP COLUMN IF EXISTS password;
